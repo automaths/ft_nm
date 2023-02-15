@@ -1,2 +1,2 @@
-# nm
+# ft_nm
 Reimplement nm 
