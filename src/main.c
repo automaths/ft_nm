@@ -1,11 +1,4 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <string.h>
+#include "ft_nm.h"
 
 void exiting(char *str)
 {
@@ -34,5 +27,7 @@ int main(int argc, char *argv[])
     preferred_block_size = (long)file_stats.st_blksize;
     file_size = (long long)file_stats.st_size;
     blocks_allocated = (long long)file_stats.st_blocks;
+    printf("preferred block size: %ld\nfile size: %lld\nblocks allocated: %lld\n", preferred_block_size, file_size, blocks_allocated);
+    printf("test ft_strlen: %ld\n", ft_strlen("coucou"));
     return (0);
 }
