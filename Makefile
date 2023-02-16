@@ -4,6 +4,7 @@ SRC_DIR     := 	src
 OBJ_DIR     := 	obj
 SRCS        := 	main.c \
 				utils/ft_strlen.c \
+				utils/ft_memcpy.c \
 
 SRCS        := $(SRCS:%=$(SRC_DIR)/%)
 OBJS        := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
