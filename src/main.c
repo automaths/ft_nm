@@ -1,57 +1,80 @@
 #include "ft_nm.h"
 
-void exiting(char *str)
+void writing(char *str)
 {
     write(2, str, strlen(str));
-    exit(EXIT_FAILURE);
 }
 
 int main(int argc, char *argv[])
 {
     struct stat file_stats;
-    long int preferred_block_size;
-    long long int file_size;
-    long long int blocks_allocated;
 
     if (argc != 2)
-        exiting("two arguments are needed\n");
+        return (writing("two arguments are needed\n"), 0);
     int fd = open(argv[1], O_RDONLY);
     if (fd == -1)
-        exiting("open error\n");
+        return (writing("open error\n"), 0);
     if (fstat(fd, &file_stats) == -1)
-        exiting("fstat error\n");
+        return (close(fd), writing("fstat error\n"), 0);
     if ((file_stats.st_mode & S_IFMT) != S_IFREG)
-        exiting("argument need to be regular file\n");
+        return (close(fd), writing("argument need to be regular file\n"), 0);
     if (!(file_stats.st_mode & S_IRUSR))
-        exiting("no read access to file\n");
-    preferred_block_size = (long)file_stats.st_blksize;
-    file_size = (long long)file_stats.st_size;
-    blocks_allocated = (long long)file_stats.st_blocks;
-    printf("preferred block size: %ld\nfile size: %lld\nblocks allocated: %lld\n", preferred_block_size, file_size, blocks_allocated);
-    printf("test ft_strlen: %ld\n", ft_strlen("coucou"));
+        return (close(fd), writing("no read access to file\n"), 0);
 
-    char *ptr = mmap(NULL,file_stats.st_size,
-            PROT_READ|PROT_WRITE,MAP_PRIVATE,
-            fd,0);
-    if(ptr == MAP_FAILED){
-        printf("Mapping Failed\n");
-        return 1;
-    }
+    char *ptr = mmap(NULL,file_stats.st_size, PROT_READ|PROT_WRITE,MAP_PRIVATE, fd,0);
+    if(ptr == MAP_FAILED)
+        return (close(fd), writing("no read access to file\n"), 0);
     close(fd);
 
     char *buffer = (char *)malloc(file_stats.st_size + 1);
     if (buffer == NULL)
-        exiting("malloc error\n");
+        return (close(fd), writing("malloc error\n"), 0);
     buffer[file_stats.st_size] = '\0';
     ft_memcpy(buffer, ptr, file_stats.st_size);
 
-    write(1, buffer, file_stats.st_size);
+    // write(1, buffer, file_stats.st_size);
 
-    // write(1, "\n\nGOGO\n\n", 8);
-    // ssize_t n = write(1,ptr,file_stats.st_size);
-    // if(n != file_stats.st_size){
-    //     printf("Write failed");
-    // }
+    Elf64_Ehdr * header = (Elf64_Ehdr *) ptr;
+    Elf64_Shdr * sections = (Elf64_Shdr *)((char *)ptr + header->e_shoff);
+    // Elf64_Sym * symtab;
+
+    // long int size_symtab = 0;
+    for (int i = 0; i < header->e_shnum; i++)
+    if (sections[i].sh_type == SHT_SYMTAB) {
+        // printf("section found\n");
+        // printf("flags: %lx\n", sections[i].sh_flags);
+        // printf("size: %ld\n", sections[i].sh_size);
+        // printf("addr: %ld\n", sections[i].sh_addr);
+        // printf("offset: %ld\n", sections[i].sh_offset);
+        // printf("link: %d\n", sections[i].sh_link);
+        // printf("info: %d\n", sections[i].sh_info);
+        // printf("addralign: %ld\n", sections[i].sh_addralign);
+        // printf("entsize: %ld\n", sections[i].sh_entsize);
+        
+        // if (i + 1 < header->e_shnum)
+        // {
+            // size_symtab = sections[i + 1].sh_offset - sections[i].sh_offset + sections[i].sh_size;
+        // }
+        // write(1, &buffer[sections[i].sh_offset + sections[i].sh_size], size_symtab);
+
+        Elf64_Phdr *segments = (Elf64_Phdr *)&buffer[sections[i].sh_offset + sections[i].sh_size];
+
+        printf("p_align: %ld\n", segments->p_align);
+        printf("p_filesz: %ld\n", segments->p_filesz);
+        printf("p_flags: %d\n", segments->p_flags);
+        printf("p_memsz: %ld\n", segments->p_memsz);
+        printf("p_offset: %ld\n", segments->p_offset);
+        printf("p_addr: %ld\n", segments->p_paddr);
+        printf("p_type: %d\n", segments->p_type);
+        printf("p_vaddr: %ld\n", segments->p_vaddr);
+
+        // write(1, &buffer[sections[i].sh_offset], sections[i].sh_size);
+
+
+        // symtab = (Elf64_Sym *)((char *)ptr + sections[i].sh_offset);
+        // break; 
+    }
+
 
     int err = munmap(ptr, file_stats.st_size);
     if(err != 0){
