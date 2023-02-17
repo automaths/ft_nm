@@ -34,13 +34,27 @@ int main(int argc, char *argv[])
 
     Elf64_Ehdr * header = (Elf64_Ehdr *) ptr;
     Elf64_Shdr * sections = (Elf64_Shdr *)((char *)ptr + header->e_shoff);
-    // Elf64_Shdr * sh_strtab = (Elf64_Shdr *)(&sections[header->e_shstrndx]);
-    // const char * sh_strtab_p = ptr + sh_strtab->sh_offset;
+    Elf64_Shdr * sh_strtab = (Elf64_Shdr *)(&sections[header->e_shstrndx]);
+    const char * sh_strtab_p = ptr + sh_strtab->sh_offset;
 
     // for (int i = 0; i < header->e_shnum; ++i) {
     // printf("%2d: %4d '%s'\n", i, sections[i].sh_name,
     //        sh_strtab_p + sections[i].sh_name);
     // }
+
+    // char *sh_strtab_str = (char*)sh_strtab;
+
+
+
+    Elf64_Shdr *strtab_ptr;
+    for (int i = 0; i < header->e_shnum; i++)
+    if (!ft_strncmp((char *)(sh_strtab_p + sections[i].sh_name), ".strtab", 8)) {
+        strtab_ptr = &sections[i];
+    }
+
+    char *str = (char *)(ptr + strtab_ptr->sh_offset);
+    write(1, str, strtab_ptr->sh_size);
+    
 
     Elf64_Sym *sym;
     for (int i = 0; i < header->e_shnum; i++)
@@ -55,17 +69,23 @@ int main(int argc, char *argv[])
         // printf("entsize: %ld\n", sections[i].sh_entsize);
         // printf("name: %d\n", sections[i].sh_name);
         sym = (Elf64_Sym*)(ptr + sections[i].sh_offset);
+        char *str_loop;
         for (unsigned long int j = 0; j < sections[i].sh_size / sizeof(Elf64_Sym); ++j)
         {
-            printf("\nNUMBER %ld\n", j);
-            printf("name %d\n", sym[j].st_name);
-            printf("info %d\n", sym[j].st_info);
-            printf("other %d\n", sym[j].st_other);
-            printf("shndx %d\n", sym[j].st_shndx);
-            printf("value %ld\n", sym[j].st_value);
-            printf("size %ld\n", sym[j].st_size);
+            // printf("\nNUMBER %ld\n", j);
+            if (j + 1 < sections[i].sh_size / sizeof(Elf64_Sym))
+                str_loop = ft_substr(str + sym[j].st_name, 0, sym[j + 1].st_name - sym[j].st_name);
+            else
+                str_loop = ft_substr(str + sym[j].st_name, 0, 5);
+            printf("name of section: %s\n", str_loop);
+            free(str_loop);
+            // printf("st_name %d\n", sym[j].st_name);
+            // printf("st_info %d\n", sym[j].st_info);
+            // printf("st_other %d\n", sym[j].st_other);
+            // printf("st_shndx %d\n", sym[j].st_shndx);
+            // printf("st_value %ld\n", sym[j].st_value);
+            // printf("st_size %ld\n", sym[j].st_size);
         }
-        printf("size %ld\n", sym->st_size);
     }
 
     // for (int i = 0; i < header->e_shnum; i++)
