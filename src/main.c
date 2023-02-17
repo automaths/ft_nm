@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
     Elf64_Ehdr * header = (Elf64_Ehdr *) ptr;
     Elf64_Shdr * sections = (Elf64_Shdr *)((char *)ptr + header->e_shoff);
-    Elf64_Shdr * sh_strtab = (Elf64_Shdr *)(&sections[header->e_shstrndx]);
+    // Elf64_Shdr * sh_strtab = (Elf64_Shdr *)(&sections[header->e_shstrndx]);
     // const char * sh_strtab_p = ptr + sh_strtab->sh_offset;
 
     // for (int i = 0; i < header->e_shnum; ++i) {
@@ -45,41 +45,6 @@ int main(int argc, char *argv[])
     Elf64_Sym *sym;
     for (int i = 0; i < header->e_shnum; i++)
     if (sections[i].sh_type == SHT_SYMTAB) {
-
-        printf("cava");
-        sym = (Elf64_Sym*)(ptr + sections[i].sh_offset);
-        char* str = (char*)(ptr + sh_strtab->sh_offset);
-        printf("name %d\n", sym->st_name);
-        printf("info %d\n", sym->st_info);
-        printf("other %d\n", sym->st_other);
-        printf("shndx %d\n", sym->st_shndx);
-        printf("value %ld\n", sym->st_value);
-        printf("size %ld\n", sym->st_size);
-
-
-        for (size_t i = 0; i < sections[i].sh_size / sizeof(Elf64_Sym); i++) {
-            printf("coucou");
-            printf("%s\n", str + sym[i].st_name);
-        }
-
-        // symtab = (Elf64_Sym *)&sections[i];
-        // Elf64_Sym *symtab2 = &symtab[1];
-        // printf("name %d\n", symtab->st_name);
-        // printf("info %d\n", symtab->st_info);
-        // printf("other %d\n", symtab->st_other);
-        // printf("shndx %d\n", symtab->st_shndx);
-        // printf("value %ld\n", symtab->st_value);
-        // printf("size %ld\n", symtab->st_size);
-
-
-
-        // printf("name %d\n", symtab2->st_name);
-        // printf("info %d\n", symtab2->st_info);
-        // printf("other %d\n", symtab2->st_other);
-        // printf("shndx %d\n", symtab2->st_shndx);
-        // printf("value %ld\n", symtab2->st_value);
-        // printf("size %ld\n", symtab2->st_size);
-        // printf("section found\n");
         // printf("flags: %lx\n", sections[i].sh_flags);
         // printf("size: %ld\n", sections[i].sh_size);
         // printf("addr: %p\n", &sections[i].sh_addr);
@@ -89,45 +54,19 @@ int main(int argc, char *argv[])
         // printf("addralign: %ld\n", sections[i].sh_addralign);
         // printf("entsize: %ld\n", sections[i].sh_entsize);
         // printf("name: %d\n", sections[i].sh_name);
-
-
-
-        // char *name = (char *)malloc(sizeof(sections[i].sh_size));
-        // ft_memcpy(name, &buffer[sections[i].sh_offset], sections[i].sh_size);
-
-        // write(1, &buffer[sections[i].sh_offset], sections[i].sh_size);
-
-        // printf("the name is: %s\n", name);
-
-
-
-        
-        // if (i + 1 < header->e_shnum)
-        // {
-            // size_symtab = sections[i + 1].sh_offset - sections[i].sh_offset + sections[i].sh_size;
-        // }
-        // printf("first characters: %d\n", buffer[sections[i].sh_offset + sections[i].sh_size]);
-        // printf("first characters: %p\n", &buffer[sections[i].sh_offset + sections[i].sh_size]);
-        // write(1, &buffer[sections[i].sh_offset + sections[i].sh_size], size_symtab);
-
-        // Elf64_Phdr *segments = (Elf64_Phdr *)&buffer[sections[i].sh_offset + sections[i].sh_size];
-
-        // printf("p_align: %ld\n", segments->p_align);
-        // printf("p_filesz: %ld\n", segments->p_filesz);
-        // printf("p_flags: %d\n", segments->p_flags);
-        // printf("p_memsz: %ld\n", segments->p_memsz);
-        // printf("p_offset: %ld\n", segments->p_offset);
-        // printf("p_addr: %ld\n", segments->p_paddr);
-        // printf("p_type: %d\n", segments->p_type);
-        // printf("p_vaddr: %ld\n", segments->p_vaddr);
-
-        // write(1, &buffer[sections[i].sh_offset], sections[i].sh_size);
-
-
-        // symtab = (Elf64_Sym *)((char *)ptr + sections[i].sh_offset);
-        // break; 
+        sym = (Elf64_Sym*)(ptr + sections[i].sh_offset);
+        for (unsigned long int j = 0; j < sections[i].sh_size / sizeof(Elf64_Sym); ++j)
+        {
+            printf("\nNUMBER %ld\n", j);
+            printf("name %d\n", sym[j].st_name);
+            printf("info %d\n", sym[j].st_info);
+            printf("other %d\n", sym[j].st_other);
+            printf("shndx %d\n", sym[j].st_shndx);
+            printf("value %ld\n", sym[j].st_value);
+            printf("size %ld\n", sym[j].st_size);
+        }
+        printf("size %ld\n", sym->st_size);
     }
-
 
     // for (int i = 0; i < header->e_shnum; i++)
     // if (sections[i].sh_type == SHT_HASH) {
@@ -148,7 +87,6 @@ int main(int argc, char *argv[])
     //     }
     //     write(1, &buffer[sections[i].sh_offset + sections[i].sh_size], size_symtab);
     // }
-
 
     int err = munmap(ptr, file_stats.st_size);
     if(err != 0){
