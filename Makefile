@@ -10,7 +10,8 @@ SRCS        := 	main.c \
 				libft/ft_substr.c \
 				libft/ft_split.c \
 				libft/ft_strdup.c \
-				utils/garbage.c \
+				libft/ft_isalnum.c \
+				utils/grb.c \
 
 
 SRCS        := $(SRCS:%=$(SRC_DIR)/%)

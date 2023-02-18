@@ -49,5 +49,6 @@ t_grb    *new_grb(void *content);
 bool    add_grb(t_grb **grb, t_grb *new);
 void    clean_grb(t_grb **grb);
 bool    malloc_secure(void *ptr, t_data *zz);
+int     ft_isalnum(int c);
 
 #endif

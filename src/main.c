@@ -52,13 +52,11 @@ char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr)
 
 int main(int argc, char *argv[])
 {
-    t_data dt;
+    t_data zz;
     struct stat file_stats;
 
-    if (!parse_argv(argc, argv, &dt))
+    if (!parse_argv(argc, argv, &zz))
         return (0);
-
-
 
     if (argc != 2)
         return (writing("two arguments are needed\n"), 0);

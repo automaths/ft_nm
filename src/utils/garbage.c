@@ -14,8 +14,8 @@ t_grb    *new_grb(void *content)
     t_grb    *new;
 
     new = (t_grb *)malloc(sizeof(t_grb));
-    //if (new == NULL)
-        //upstream the error
+    if (new == NULL)
+        return NULL;
     new->grb = content;
     new->next = NULL;
     return (new);
