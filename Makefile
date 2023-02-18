@@ -3,10 +3,14 @@ NAME        :=	ft_nm
 SRC_DIR     := 	src
 OBJ_DIR     := 	obj
 SRCS        := 	main.c \
-				utils/ft_strlen.c \
-				utils/ft_memcpy.c \
-				utils/ft_strncmp.c \
-				utils/ft_substr.c \
+				initing.c \
+				libft/ft_strlen.c \
+				libft/ft_memcpy.c \
+				libft/ft_strncmp.c \
+				libft/ft_substr.c \
+				libft/ft_split.c \
+				libft/ft_strdup.c \
+
 
 SRCS        := $(SRCS:%=$(SRC_DIR)/%)
 OBJS        := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

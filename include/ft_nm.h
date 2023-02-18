@@ -11,12 +11,38 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <elf.h>
+#include <stdbool.h>
 
-size_t	ft_strlen(const char *str);
-void	*ft_memcpy(void *dest, const void *src, size_t len);
-void	ft_putnbr_fd(int n, int fd);
+typedef struct s_argv {
+    bool a;
+    bool g;
+    bool p;
+    bool r;
+    bool u;
+    char **files;
+} t_argv;
+
+typedef struct s_grb
+{
+    void            *grb;
+    struct s_grb    *next;
+} t_grb;
+
+typedef struct s_data {
+    t_argv argv;
+
+
+} t_data;
+
+size_t  ft_strlen(const char *str);
+void    *ft_memcpy(void *dest, const void *src, size_t len);
+void    ft_putnbr_fd(int n, int fd);
 int     ft_isalnum(int c);
 int     ft_strncmp(const char *s1, const char *s2, size_t n);
-char	*ft_substr(char const *s, unsigned int start, size_t len);
+char    *ft_substr(char const *s, unsigned int start, size_t len);
+bool    parse_argv(int argc, char **argv, t_data *zz);
+char    **ft_split(char const *s, char c);
+char    *ft_strdup(const char *str);
+void    writing(char *str);
 
 #endif

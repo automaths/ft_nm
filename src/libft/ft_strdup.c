@@ -1,3 +1,5 @@
+#include "ft_nm.h"
+
 char	*ft_strdup(const char *str)
 {
 	char	*ptr;

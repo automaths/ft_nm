@@ -5,12 +5,32 @@ void writing(char *str)
     write(2, str, strlen(str));
 }
 
-char	print_type(Elf64_Sym sym, Elf64_Shdr *shdr)
+char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr)
 {
     char    c;
 
     if (ELF64_ST_BIND(sym.st_info) == STB_GNU_UNIQUE)
         c = 'u';
+    else if (sym.st_shndx == SHN_UNDEF)
+        c = 'U';
+    else if (sym.st_shndx == SHN_ABS)
+        c = 'A';
+    else if (sym.st_shndx == SHN_COMMON)
+        c = 'C';
+    else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS
+             && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
+        c = 'B';
+    else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS
+             && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
+        c = 'T';
+    else if (shdr[sym.st_shndx].sh_type == SHT_DYNAMIC)
+        c = 'D';
+    else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS
+             && shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
+        c = 'R';
+    else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS
+             && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
+        c = 'D';
     else if (ELF64_ST_BIND(sym.st_info) == STB_WEAK)
         {
             c = 'W';
@@ -23,26 +43,6 @@ char	print_type(Elf64_Sym sym, Elf64_Shdr *shdr)
             if (sym.st_shndx == SHN_UNDEF)
                 c = 'v';
         }
-    else if (sym.st_shndx == SHN_UNDEF)
-        c = 'U';
-    else if (sym.st_shndx == SHN_ABS)
-        c = 'A';
-    else if (sym.st_shndx == SHN_COMMON)
-        c = 'C';
-    else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS
-             && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-        c = 'B';
-    else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS
-             && shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
-        c = 'R';
-    else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS
-             && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
-        c = 'D';
-    else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS
-             && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
-        c = 'T';
-    else if (shdr[sym.st_shndx].sh_type == SHT_DYNAMIC)
-        c = 'D';
     else
         c = '?';
     if (ELF64_ST_BIND(sym.st_info) == STB_LOCAL && c != '?')
@@ -52,7 +52,13 @@ char	print_type(Elf64_Sym sym, Elf64_Shdr *shdr)
 
 int main(int argc, char *argv[])
 {
+    t_data dt;
     struct stat file_stats;
+
+    if (!parse_argv(argc, argv, &dt))
+        return (0);
+
+
 
     if (argc != 2)
         return (writing("two arguments are needed\n"), 0);
@@ -66,7 +72,7 @@ int main(int argc, char *argv[])
     if (!(file_stats.st_mode & S_IRUSR))
         return (close(fd), writing("no read access to file\n"), 0);
 
-    char *ptr = mmap(NULL,file_stats.st_size, PROT_READ|PROT_WRITE,MAP_PRIVATE, fd,0);
+    char *ptr = mmap(NULL, file_stats.st_size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
     if(ptr == MAP_FAILED)
         return (close(fd), writing("no read access to file\n"), 0);
     close(fd);
@@ -109,7 +115,6 @@ int main(int argc, char *argv[])
         // printf("addralign: %ld\n", sections[i].sh_addralign);
         // printf("entsize: %ld\n", sections[i].sh_entsize);
         // printf("name: %d\n", sections[i].sh_name);
-
 		char **names = (char **)malloc((sections[i].sh_size / sizeof(Elf64_Sym) * sizeof(char*)));
 		if (names == NULL)
 			return (0);
@@ -117,23 +122,27 @@ int main(int argc, char *argv[])
         char *str_loop;
         for (unsigned long int j = 0; j < sections[i].sh_size / sizeof(Elf64_Sym); ++j)
         {
-            if (j + 1 < sections[i].sh_size / sizeof(Elf64_Sym))
-                str_loop = ft_substr(str + sym[j].st_name, 0, sym[j + 1].st_name - sym[j].st_name);
-            else
-                str_loop = ft_substr(str + sym[j].st_name, 0, sections[i].sh_offset + sections[i].sh_size - sym[j].st_name);
-			if (sym[j].st_value)
-				printf("%016lx ", sym[j].st_value);
-			else
-				printf("                 ");
-			printf("%c ", print_type(sym[j], sections));
-            printf("%s\n", str_loop);
-            free(str_loop);
-            // printf("st_name %d\n", sym[j].st_name);
-            // printf("st_info %d\n", sym[j].st_info);
-            // printf("st_other %d\n", sym[j].st_other);
-            // printf("st_shndx %d\n", sym[j].st_shndx);
-            // printf("st_value %ld\n", sym[j].st_value);
-            // printf("st_size %ld\n", sym[j].st_size);
+            if (sym[j].st_name && symtab_section_type(sym[j], sections) != 'a')
+            {
+                if (j + 1 < sections[i].sh_size / sizeof(Elf64_Sym))
+                    str_loop = ft_substr(str + sym[j].st_name, 0, sym[j + 1].st_name - sym[j].st_name);
+                else
+                    str_loop = ft_substr(str + sym[j].st_name, 0, sections[i].sh_offset + sections[i].sh_size - sym[j].st_name);
+                if (sym[j].st_value || symtab_section_type(sym[j], sections) == 'T')
+                    printf("%016lx ", sym[j].st_value);
+                else
+                    printf("                 ");
+                printf("%c ", symtab_section_type(sym[j], sections));
+                printf("%s\n", str_loop);
+                free(str_loop);
+                // printf("%d, %d %d %d %d ", ELF64_ST_BIND(sym[j].st_info), ELF64_ST_TYPE(sym[j].st_info), sym[j].st_info, sym[j].st_shndx, sym[j].st_other);
+                // printf("st_name %d\n", sym[j].st_name);
+                // printf("st_info %d\n", sym[j].st_info);
+                // printf("st_other %d\n", sym[j].st_other);
+                // printf("st_shndx %d\n", sym[j].st_shndx);
+                // printf("st_value %ld\n", sym[j].st_value);
+                // printf("st_size %ld\n", sym[j].st_size);
+            }
         }
     }
 

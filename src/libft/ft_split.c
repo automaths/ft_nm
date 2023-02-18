@@ -1,3 +1,5 @@
+#include "ft_nm.h"
+
 static int	is_charset(char const *str, char charset)
 {
 	if (charset == *str)

@@ -1,0 +1,14 @@
+                 U close
+                 U exit
+0000000000000000 T exiting
+                 U fstat
+                 U ft_memcpy
+000000000000003a T main
+                 U malloc
+                 U mmap
+                 U munmap
+                 U open
+                 U puts
+                 U __stack_chk_fail
+                 U strlen
+                 U write
