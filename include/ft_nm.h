@@ -13,6 +13,8 @@
 #include <elf.h>
 #include <stdbool.h>
 
+#define ERR_MALLOC "Error: failed malloc\n"
+
 typedef struct s_argv {
     bool a;
     bool g;
@@ -29,9 +31,8 @@ typedef struct s_grb
 } t_grb;
 
 typedef struct s_data {
-    t_argv argv;
-
-
+    t_argv  argv;
+    t_grb   *grb;
 } t_data;
 
 size_t  ft_strlen(const char *str);
@@ -44,5 +45,9 @@ bool    parse_argv(int argc, char **argv, t_data *zz);
 char    **ft_split(char const *s, char c);
 char    *ft_strdup(const char *str);
 void    writing(char *str);
+t_grb    *new_grb(void *content);
+bool    add_grb(t_grb **grb, t_grb *new);
+void    clean_grb(t_grb **grb);
+bool    malloc_secure(void *ptr, t_data *zz);
 
 #endif
