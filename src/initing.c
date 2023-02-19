@@ -30,19 +30,46 @@ void parse_options(char *options, t_data *zz)
     }
 }
 
+bool is_option(char *arg, t_data *zz)
+{
+    if (ft_strlen(arg) && arg[0] == '-')
+    {
+        parse_options(arg, zz);
+        return true;
+    }
+    return false;
+}
+
 bool parse_argv(int argc, char **argv, t_data *zz)
 {
-    if (argc == 1)
+    int i;
+    int j;
+
+    if (argc == 1 || (argc == 2 && is_option(argv[1], zz)))
     {
-        zz->argv.files = (char**)malloc(sizeof(char*));
-        if (!malloc_secure(zz->argv.files, zz))
+        zz->argv.files = (char**)malloc(sizeof(char*) * 2);
+        if (!malloc_secure((void*)zz->argv.files, &zz))
             return false;
+        zz->argv.files[1] = NULL;
         zz->argv.files[0] = ft_strdup("a.out");
-        if (!malloc_secure(zz->argv.files[0], zz))
+        if (!malloc_secure((void*)zz->argv.files[0], &zz))
             return false;
     }
-    if (ft_strlen(argv[1]) && argv[1][0] == '-')
-        parse_options(argv[1], zz);
-
+    else
+    {
+        i = 0;
+        if (is_option(argv[1], zz))
+            ++i;
+        zz->argv.files = (char**)malloc(sizeof(char*) * (argc - i));
+        if (!malloc_secure((void*)zz->argv.files, &zz))
+            return false;
+        zz->argv.files[argc - i] = NULL;
+        j = 0;
+        while (++i < argc)
+        {
+            zz->argv.files[j] = argv[i];
+            ++j;
+        }
+    }
     return true;
 }

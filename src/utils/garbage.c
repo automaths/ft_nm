@@ -1,11 +1,11 @@
 #include "ft_nm.h"
 
-bool    malloc_secure(void *ptr, t_data *zz)
+bool    malloc_secure(void *ptr, t_data **zz)
 {
     if (ptr == NULL)
-        return (writing(ERR_MALLOC), clean_grb(&zz->grb), false);
-    if(!add_grb(&zz->grb, new_grb(ptr)))
-        return (writing(ERR_MALLOC), clean_grb(&zz->grb), false);
+        return (writing(ERR_MALLOC), clean_grb(&(*zz)->grb), false);
+    if(!add_grb(&(*zz)->grb, new_grb(ptr)))
+        return (writing(ERR_MALLOC), clean_grb(&(*zz)->grb), false);
     return true;
 }
 
@@ -23,19 +23,13 @@ t_grb    *new_grb(void *content)
 
 bool    add_grb(t_grb **grb, t_grb *new)
 {
-    t_grb    *tmp;
-
     if (new == NULL)
         return false;
-    if (*grb)
+    else
     {
-        tmp = *grb;
-        while (tmp->next)
-            tmp = tmp->next;
-        tmp->next = new;
-    }
-    else if (grb)
+        new->next = *grb;
         *grb = new;
+    }
     return true;
 }
 

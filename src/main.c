@@ -50,6 +50,16 @@ char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr)
     return c;
 }
 
+void print_struct(t_data *zz)
+{
+    int i;
+
+    printf("the options are: \na: %d, g: %d, p: %d, r: %d, u: %d\n", zz->argv.a, zz->argv.g, zz->argv.p, zz->argv.r, zz->argv.u);
+    i = -1;
+    while (zz->argv.files[++i] != NULL)
+        printf("file %d: %s\n", i + 1, zz->argv.files[i]);
+}
+
 int main(int argc, char *argv[])
 {
     t_data zz;
@@ -58,8 +68,15 @@ int main(int argc, char *argv[])
     if (!parse_argv(argc, argv, &zz))
         return (0);
 
+    print_struct(&zz);
+
+    return (0);
+
+
     if (argc != 2)
         return (writing("two arguments are needed\n"), 0);
+
+        
     int fd = open(argv[1], O_RDONLY);
     if (fd == -1)
         return (writing("open error\n"), 0);
