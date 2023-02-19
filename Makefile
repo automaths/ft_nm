@@ -15,6 +15,7 @@ SRCS        := 	main.c \
 				displaying.c \
 				typing.c \
 				utils/element.c \
+				parsing_elf.c \
 
 
 SRCS        := $(SRCS:%=$(SRC_DIR)/%)

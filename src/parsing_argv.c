@@ -7,7 +7,8 @@ void init_struct(t_data *zz)
     zz->argv.p = false;
     zz->argv.r = false;
     zz->argv.u = false;
-    zz->grb = NULL;
+    zz->elem->next = NULL;
+    zz->grb->next = NULL;
 }
 
 void parse_options(char *options, t_data *zz)

@@ -3,9 +3,9 @@
 bool    malloc_secure(void *ptr, t_data **zz)
 {
     if (ptr == NULL)
-        return (writing(ERR_MALLOC), false);
+        return (writing(ERR_MALLOC), clean_grb(&(*zz)->grb), false);
     if(!add_grb(&(*zz)->grb, new_grb(ptr)))
-        return (writing(ERR_MALLOC), false);
+        return (writing(ERR_MALLOC), clean_grb(&(*zz)->grb), false);
     return true;
 }
 
@@ -39,7 +39,7 @@ void    clean_grb(t_grb **grb)
     t_grb    *next;
 
     tmp = *grb;
-    while (tmp)
+    while (tmp->next != NULL)
     {
         next = tmp->next;
         if (tmp->grb)

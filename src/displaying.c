@@ -15,7 +15,7 @@ void print_struct(t_data *zz)
         printf("file %d: %s\n", i + 1, zz->argv.files[i]);
 }
 
-void print_section(Elf64_Shdr * sections)
+void print_section_debug(Elf64_Shdr * sections)
 {
     printf("flags: %lx\n", sections->sh_flags);
     printf("size: %ld\n", sections->sh_size);
@@ -28,7 +28,7 @@ void print_section(Elf64_Shdr * sections)
     printf("name: %d\n", sections->sh_name);
 }
 
-void print_symtab(Elf64_Sym *sym)
+void print_symtab_debug(Elf64_Sym *sym)
 {
     printf("%d, %d %d %d %d ", ELF64_ST_BIND(sym->st_info), ELF64_ST_TYPE(sym->st_info), sym->st_info, sym->st_shndx, sym->st_other);
     printf("st_name %d\n", sym->st_name);
@@ -37,4 +37,15 @@ void print_symtab(Elf64_Sym *sym)
     printf("st_shndx %d\n", sym->st_shndx);
     printf("st_value %ld\n", sym->st_value);
     printf("st_size %ld\n", sym->st_size);
+}
+
+void print_element(t_elem *elem)
+{
+    // elem->type != 'a'
+    if (elem->st_value || elem->type == 'T')
+        printf("%016lx ", elem->st_value);
+    else
+        printf("                 ");
+    printf("%c ", elem->type);
+    printf("%s\n", elem->name);
 }

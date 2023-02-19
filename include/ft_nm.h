@@ -66,10 +66,14 @@ bool                malloc_secure(void *ptr, t_data **zz);
 int                 ft_isalnum(int c);
 void                writing(char *str);
 void                print_struct(t_data *zz);
-void                print_section(Elf64_Shdr * sections);
-void                print_symtab(Elf64_Sym *sym);
 char	            symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr);
 t_elem              *new_elem(char *name, char type, Elf64_Addr st_value, t_data *zz);
 bool                add_elem(t_elem **elem, t_elem *new);
+void                print_section_debug(Elf64_Shdr * sections);
+void                print_symtab_debug(Elf64_Sym *sym);
+void                print_element(t_elem *elem);
+char*               init_file(char *files, struct stat *file_stats);
+void                init_pointers(char *ptr, t_data *zz);
+bool                parsing_elf(char *file, t_data *zz);
 
 #endif
