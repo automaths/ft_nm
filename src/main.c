@@ -23,17 +23,18 @@ char* init_file(char *files, struct stat *file_stats)
 
 void init_pointers(char *ptr, t_data *zz)
 {
-    Elf64_Shdr *sh_strtab;
-    char *sh_strtab_p;
+    Elf64_Shdr *table_index;
+    char *table_titles;
 
     zz->header = (Elf64_Ehdr*)ptr;
     zz->sections = (Elf64_Shdr*)((char *)ptr + zz->header->e_shoff);
-    sh_strtab = (Elf64_Shdr*)(&zz->sections[zz->header->e_shstrndx]);
-    sh_strtab_p = (char*)(ptr + sh_strtab->sh_offset);
+    table_index = (Elf64_Shdr*)(&zz->sections[zz->header->e_shstrndx]);
+    table_titles = (char*)(ptr + table_index->sh_offset);
     for (int i = 0; i < zz->header->e_shnum; i++)
-    if (!ft_strncmp((char *)(sh_strtab_p + zz->sections[i].sh_name), ".strtab", 8)) {
-        zz->strtab_ptr = &zz->sections[i];
+    if (!ft_strncmp((char *)(table_titles + zz->sections[i].sh_name), ".strtab", 8)) {
+        zz->strtab_section = &zz->sections[i];
     }
+    zz->strtab = (char *)(ptr + zz->strtab_section->sh_offset);
 }
 
 int main(int argc, char *argv[])
@@ -50,42 +51,40 @@ int main(int argc, char *argv[])
         return (clean_grb(&zz.grb), 0);
     init_pointers(ptr, &zz);
 
-    Elf64_Ehdr *header = zz.header;
-    Elf64_Shdr *sections = zz.sections;
-    Elf64_Shdr *strtab_ptr = zz.strtab_ptr;
+    
+    for (int i = 0; i < zz.header->e_shnum; i++)
+    if (zz.sections[i].sh_type == SHT_SYMTAB) {
 
-
-    char *str = (char *)(ptr + strtab_ptr->sh_offset);
-    Elf64_Sym *sym;
-    for (int i = 0; i < header->e_shnum; i++)
-    if (sections[i].sh_type == SHT_SYMTAB) {
-        // print_section(&sections[i]);
-		char **names = (char **)malloc((sections[i].sh_size / sizeof(Elf64_Sym) * sizeof(char*)));
-		if (names == NULL)
-			return (0);
-        sym = (Elf64_Sym*)(ptr + sections[i].sh_offset);
-        char *str_loop;
-        for (unsigned long int j = 0; j < sections[i].sh_size / sizeof(Elf64_Sym); ++j)
+        zz.sym = (Elf64_Sym*)(ptr + zz.sections[i].sh_offset);
+        char *buf;
+        for (unsigned long int j = 0; j < zz.sections[i].sh_size / sizeof(Elf64_Sym); ++j)
         {
-            if (sym[j].st_name && symtab_section_type(sym[j], sections) != 'a')
+            // if (zz.sym[j].st_name && symtab_section_type(zz.sym[j], zz.sections) != 'a')
+            if (zz.sym[j].st_name)
             {
-                if (j + 1 < sections[i].sh_size / sizeof(Elf64_Sym))
-                    str_loop = ft_substr(str + sym[j].st_name, 0, sym[j + 1].st_name - sym[j].st_name);
+                if (j + 1 < zz.sections[i].sh_size / sizeof(Elf64_Sym))
+                    buf = ft_substr(zz.strtab + zz.sym[j].st_name, 0, zz.sym[j + 1].st_name - zz.sym[j].st_name);
                 else
-                    str_loop = ft_substr(str + sym[j].st_name, 0, sections[i].sh_offset + sections[i].sh_size - sym[j].st_name);
-                if (sym[j].st_value || symtab_section_type(sym[j], sections) == 'T')
-                    printf("%016lx ", sym[j].st_value);
+                    buf = ft_substr(zz.strtab + zz.sym[j].st_name, 0, zz.sections[i].sh_offset + zz.sections[i].sh_size - zz.sym[j].st_name);
+                if (!malloc_secure((void*)buf, &zz))
+                    return (writing(ERR_MALLOC), clean_grb(&zz.grb), 0);
+                if (!add_elem(&zz.elem, new_elem(buf, symtab_section_type(zz.sym[j], zz.sections), zz.sym[j].st_value, &zz)))
+                    return (writing(ERR_MALLOC), clean_grb(&zz.grb), 0);
+
+
+
+
+                if (zz.sym[j].st_value || symtab_section_type(zz.sym[j], zz.sections) == 'T')
+                    printf("%016lx ", zz.sym[j].st_value);
                 else
                     printf("                 ");
-                printf("%c ", symtab_section_type(sym[j], sections));
+                printf("%c ", symtab_section_type(zz.sym[j], zz.sections));
                 printf("%s\n", str_loop);
-                free(str_loop);
-                // print_symtab(&sym[j]);
             }
         }
     }
-    // if (sections[i].sh_type == SHT_HASH)
-    // if (sections[i].sh_type == SHT_DYNSYM)
+    // if (zz.sections[i].sh_type == SHT_HASH)
+    // if (zz.sections[i].sh_type == SHT_DYNSYM)
 
     int err = munmap(ptr, file_stats.st_size);
     if(err != 0){

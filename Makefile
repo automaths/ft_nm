@@ -14,6 +14,7 @@ SRCS        := 	main.c \
 				utils/garbage.c \
 				displaying.c \
 				typing.c \
+				utils/element.c \
 
 
 SRCS        := $(SRCS:%=$(SRC_DIR)/%)
