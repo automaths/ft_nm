@@ -33,6 +33,10 @@ typedef struct s_grb
 typedef struct s_data {
     t_argv  argv;
     t_grb   *grb;
+
+    Elf64_Ehdr *header;
+    Elf64_Shdr *sections;
+    Elf64_Shdr *strtab_ptr;
 } t_data;
 
 size_t  ft_strlen(const char *str);

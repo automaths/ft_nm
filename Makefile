@@ -3,7 +3,7 @@ NAME        :=	ft_nm
 SRC_DIR     := 	src
 OBJ_DIR     := 	obj
 SRCS        := 	main.c \
-				initing.c \
+				parsing_argv.c \
 				libft/ft_strlen.c \
 				libft/ft_memcpy.c \
 				libft/ft_strncmp.c \

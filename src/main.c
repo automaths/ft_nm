@@ -1,46 +1,60 @@
 #include "ft_nm.h"
 
+char* init_file(char *files, struct stat *file_stats)
+{
+    int fd;
+    char *ptr;
+
+    fd = open(files, O_RDONLY);
+    if (fd == -1)
+        return (writing("open error\n"), NULL);
+    if (fstat(fd, file_stats) == -1)
+        return (close(fd), writing("fstat error\n"), NULL);
+    if ((file_stats->st_mode & S_IFMT) != S_IFREG)
+        return (close(fd), writing("argument need to be regular file\n"), NULL);
+    if (!(file_stats->st_mode & S_IRUSR))
+        return (close(fd), writing("no read access to file\n"), NULL);
+    ptr = mmap(NULL, file_stats->st_size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
+    if(ptr == MAP_FAILED)
+        return (close(fd), writing("no read access to file\n"), NULL);
+    close(fd);
+    return ptr;
+}
+
+void init_pointers(char *ptr, t_data *zz)
+{
+    Elf64_Shdr *sh_strtab;
+    char *sh_strtab_p;
+
+    zz->header = (Elf64_Ehdr*)ptr;
+    zz->sections = (Elf64_Shdr*)((char *)ptr + zz->header->e_shoff);
+    sh_strtab = (Elf64_Shdr*)(&zz->sections[zz->header->e_shstrndx]);
+    sh_strtab_p = (char*)(ptr + sh_strtab->sh_offset);
+    for (int i = 0; i < zz->header->e_shnum; i++)
+    if (!ft_strncmp((char *)(sh_strtab_p + zz->sections[i].sh_name), ".strtab", 8)) {
+        zz->strtab_ptr = &zz->sections[i];
+    }
+}
+
 int main(int argc, char *argv[])
 {
     t_data zz;
     struct stat file_stats;
+    char *ptr;
 
     if (!parse_argv(argc, argv, &zz))
-        return (0);
+        return (clean_grb(&zz.grb), 0);
     print_struct(&zz);
-        
-    int fd = open(zz.argv.files[0], O_RDONLY);
-    if (fd == -1)
-        return (writing("open error\n"), 0);
+    ptr = init_file(zz.argv.files[0], &file_stats);
+    if (ptr == NULL)
+        return (clean_grb(&zz.grb), 0);
+    init_pointers(ptr, &zz);
 
-    if (fstat(fd, &file_stats) == -1)
-        return (close(fd), writing("fstat error\n"), 0);
-    if ((file_stats.st_mode & S_IFMT) != S_IFREG)
-        return (close(fd), writing("argument need to be regular file\n"), 0);
-    if (!(file_stats.st_mode & S_IRUSR))
-        return (close(fd), writing("no read access to file\n"), 0);
+    Elf64_Ehdr *header = zz.header;
+    Elf64_Shdr *sections = zz.sections;
+    Elf64_Shdr *strtab_ptr = zz.strtab_ptr;
 
-    char *ptr = mmap(NULL, file_stats.st_size, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
-    if(ptr == MAP_FAILED)
-        return (close(fd), writing("no read access to file\n"), 0);
-    close(fd);
 
-    char *buffer = (char *)malloc(file_stats.st_size + 1);
-    if (buffer == NULL)
-        return (close(fd), writing("malloc error\n"), 0);
-    buffer[file_stats.st_size] = '\0';
-    ft_memcpy(buffer, ptr, file_stats.st_size);
-
-    Elf64_Ehdr * header = (Elf64_Ehdr *) ptr;
-    Elf64_Shdr * sections = (Elf64_Shdr *)((char *)ptr + header->e_shoff);
-    Elf64_Shdr * sh_strtab = (Elf64_Shdr *)(&sections[header->e_shstrndx]);
-    const char * sh_strtab_p = ptr + sh_strtab->sh_offset;
-
-    Elf64_Shdr *strtab_ptr;
-    for (int i = 0; i < header->e_shnum; i++)
-    if (!ft_strncmp((char *)(sh_strtab_p + sections[i].sh_name), ".strtab", 8)) {
-        strtab_ptr = &sections[i];
-    }
     char *str = (char *)(ptr + strtab_ptr->sh_offset);
     Elf64_Sym *sym;
     for (int i = 0; i < header->e_shnum; i++)
