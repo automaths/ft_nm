@@ -12,6 +12,8 @@ SRCS        := 	main.c \
 				libft/ft_strdup.c \
 				libft/ft_isalnum.c \
 				utils/garbage.c \
+				displaying.c \
+				typing.c \
 
 
 SRCS        := $(SRCS:%=$(SRC_DIR)/%)

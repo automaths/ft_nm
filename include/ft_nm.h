@@ -50,5 +50,10 @@ bool    add_grb(t_grb **grb, t_grb *new);
 void    clean_grb(t_grb **grb);
 bool    malloc_secure(void *ptr, t_data **zz);
 int     ft_isalnum(int c);
+void    writing(char *str);
+void    print_struct(t_data *zz);
+void    print_section(Elf64_Shdr * sections);
+void    print_symtab(Elf64_Sym *sym);
+char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr);
 
 #endif
