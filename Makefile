@@ -11,11 +11,13 @@ SRCS        := 	main.c \
 				libft/ft_split.c \
 				libft/ft_strdup.c \
 				libft/ft_isalnum.c \
+				libft/ft_isalpha.c \
 				utils/garbage.c \
 				displaying.c \
 				typing.c \
 				utils/element.c \
 				parsing_elf.c \
+				sorting.c \
 
 
 SRCS        := $(SRCS:%=$(SRC_DIR)/%)

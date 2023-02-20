@@ -35,6 +35,7 @@ typedef struct s_elem
     char            *name;
     char            type;
     Elf64_Addr      st_value;
+    bool            sorted;
     struct s_elem   *next;
 } t_elem;
 
@@ -47,6 +48,7 @@ typedef struct s_data {
     Elf64_Sym       *sym;
     char            *strtab;
     t_elem          *elem;
+    t_elem          *sorted;
 } t_data;
 
 size_t              ft_strlen(const char *str);
@@ -75,5 +77,8 @@ void                print_element(t_elem *elem);
 char*               init_file(char *files, struct stat *file_stats);
 void                init_pointers(char *ptr, t_data *zz);
 bool                parsing_elf(char *file, t_data *zz);
+int                 ft_isalpha(int c);
+int                 ft_lstsize(t_elem *elem);
+bool                sorting_elements(t_data *zz);
 
 #endif
