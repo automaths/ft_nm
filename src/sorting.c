@@ -3,22 +3,37 @@
 int	name_cmp(const char *s1, const char *s2)
 {
 	size_t			i;
+    size_t			j;
 	unsigned char	*one;
 	unsigned char	*two;
 
 	one = (unsigned char *)s1;
 	two = (unsigned char *)s2;
 	i = 0;
-	while (one[i] && two[i] && one[i] == two[i] && ft_isalpha(one[i]) && ft_isalpha(two[i]))
-		i++;
-	return (one[i] - two[i]);
+    j = 0;
+	while (one[i] && two[j] && (one[i] == two[j] || (!ft_isalpha(one[i]) || !ft_isalpha(two[j]))))
+    {
+        if (!ft_isalpha(one[i]) || !ft_isalpha(two[j]))
+        {
+            while (one[i] && !ft_isalpha(one[i]))
+                ++i;
+            while (two[j] && !ft_isalpha(two[j]))
+                ++j;
+            if (!one[i] || !two[j])
+                break;
+        }
+        else
+        {
+            j++;
+            i++;
+        }
+    }
+	return (one[i] - two[j]);
 }
 
 bool sorting_elements(t_data *zz)
 {
     t_elem *tmp = zz->elem;
-    int i = -1;
-    int j = -1;
     int size = ft_lstsize(zz->elem);
     t_elem lowest;
     t_elem *keep;
@@ -36,13 +51,7 @@ bool sorting_elements(t_data *zz)
                 tmp = tmp->next;
             if (tmp == NULL)
                 break;
-            i = -1;
-            j = -1;
-            while (lowest.name[++i] && !ft_isalpha(lowest.name[i]))
-                ;
-            while (tmp->name[++j] && !ft_isalpha(tmp->name[j]))
-                ;
-            if (name_cmp(&lowest.name[i], &tmp->name[j]) < 0)
+            if (name_cmp(lowest.name, tmp->name) < 0)
             {
                 lowest.name = tmp->name;
                 lowest.st_value = tmp->st_value;
