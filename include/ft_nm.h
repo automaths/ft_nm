@@ -80,5 +80,6 @@ bool                parsing_elf(char *file, t_data *zz);
 int                 ft_isalpha(int c);
 int                 ft_lstsize(t_elem *elem);
 bool                sorting_elements(t_data *zz);
+int                 ft_tolower(int c);
 
 #endif

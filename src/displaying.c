@@ -41,7 +41,8 @@ void print_symtab_debug(Elf64_Sym *sym)
 
 void print_element(t_elem *elem)
 {
-    // elem->type != 'a'
+    if (elem->type == 'a')
+        return ;
     if (elem->st_value || elem->type == 'T')
         printf("%016lx ", elem->st_value);
     else

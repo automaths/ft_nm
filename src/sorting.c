@@ -11,7 +11,7 @@ int	name_cmp(const char *s1, const char *s2)
 	two = (unsigned char *)s2;
 	i = 0;
     j = 0;
-	while (one[i] && two[j] && (one[i] == two[j] || (!ft_isalpha(one[i]) || !ft_isalpha(two[j]))))
+	while (one[i] && two[j] && (ft_tolower(one[i]) == ft_tolower(two[j]) || (!ft_isalpha(one[i]) || !ft_isalpha(two[j]))))
     {
         if (!ft_isalpha(one[i]) || !ft_isalpha(two[j]))
         {
@@ -28,7 +28,7 @@ int	name_cmp(const char *s1, const char *s2)
             i++;
         }
     }
-	return (one[i] - two[j]);
+	return (ft_tolower(one[i]) - ft_tolower(two[j]));
 }
 
 bool sorting_elements(t_data *zz)

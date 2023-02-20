@@ -8,7 +8,6 @@ int main(int argc, char **argv)
     (&zz)->sorted = NULL;
     if (!parse_argv(argc, argv, &zz))
         return (clean_grb(&zz.grb), 0);
-    print_struct(&zz);
     if (!parsing_elf(zz.argv.files[0], &zz))
         return (clean_grb(&zz.grb), 0);
     if (!sorting_elements(&zz))
