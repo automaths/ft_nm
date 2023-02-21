@@ -12,6 +12,7 @@
 #include <sys/mman.h>
 #include <elf.h>
 #include <stdbool.h>
+#include <inttypes.h>
 
 #define ERR_MALLOC "Error: failed malloc\n"
 
@@ -75,8 +76,8 @@ void                print_section_debug(Elf64_Shdr * sections);
 void                print_symtab_debug(Elf64_Sym *sym);
 void                print_element(t_elem *elem);
 char*               init_file(char *files, struct stat *file_stats);
-void                init_pointers(char *ptr, t_data *zz);
-bool                parsing_elf(char *file, t_data *zz);
+void                init_pointers_64bits(char *ptr, t_data *zz);
+bool                parsing_elf64(char *ptr, t_data *zz);
 int                 ft_isalpha(int c);
 int                 ft_lstsize(t_elem *elem);
 bool                sorting_elements(t_data *zz);
