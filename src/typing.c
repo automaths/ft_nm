@@ -71,6 +71,8 @@ char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr)
         else
             return 'W';
     }
+    else if (sym.st_info == 43)
+        return 'w';
     //
     else if (sym.st_shndx == SHN_UNDEF)
         c = 'U';
@@ -80,7 +82,7 @@ char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr)
     else if (shdr[sym.st_shndx].sh_type == SHT_DYNAMIC)
         c = 'D';
     else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS
-             && shdr[sym.st_shndx].sh_flags == SHF_ALLOC)
+             && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC))
         c = 'R';
     else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS
              && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
@@ -97,6 +99,10 @@ char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr)
             if (sym.st_shndx == SHN_UNDEF)
                 c = 'v';
         }
+    //
+    else if (shdr[sym.st_shndx].sh_flags == (SHF_ALLOC))
+        c = 'R';
+    //
     else
         c = '?';
     if (ELF64_ST_BIND(sym.st_info) == STB_LOCAL && c != '?')

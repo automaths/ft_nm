@@ -1,5 +1,24 @@
 #include "ft_nm.h"
 
+char	*ft_substr_st_name(char const *s)
+{
+	char	*dest;
+	size_t	i;
+
+	if (s == NULL)
+		return (NULL);
+	dest = NULL;
+	dest = malloc(sizeof(char) * (ft_strlen(s) + 1));
+	if (dest == NULL)
+		return (NULL);
+	i = -1;
+	while (s[++i])
+		dest[i] = s[i];
+	dest[i] = '\0';
+	return (dest);
+}
+
+
 char* init_file(char *files, struct stat *file_stats)
 {
     int fd;
@@ -55,10 +74,7 @@ bool parsing_elf(char *file, t_data *zz)
         {
             if (zz->sym[j].st_name)
             {
-                if (j + 1 < zz->sections[i].sh_size / sizeof(Elf64_Sym))
-                    buf = ft_substr(zz->strtab + zz->sym[j].st_name, 0, zz->sym[j + 1].st_name - zz->sym[j].st_name);
-                else
-                    buf = ft_substr(zz->strtab + zz->sym[j].st_name, 0, zz->sections[i].sh_offset + zz->sections[i].sh_size - zz->sym[j].st_name);
+                buf = ft_substr_st_name(zz->strtab + zz->sym[j].st_name);
                 if (!malloc_secure((void*)buf, &zz))
                     return (false);
                 if (!add_elem(&zz->elem, new_elem(buf, symtab_section_type(zz->sym[j], zz->sections), zz->sym[j].st_value, zz)))
