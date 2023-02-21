@@ -51,7 +51,7 @@ bool sorting_elements(t_data *zz)
                 tmp = tmp->next;
             if (tmp == NULL)
                 break;
-            if (name_cmp(lowest.name, tmp->name) < 0)
+            if (name_cmp(lowest.name, tmp->name) < 0 || (name_cmp(lowest.name, tmp->name) == 0 && (ft_strlen(lowest.name) > ft_strlen(tmp->name))))
             {
                 lowest.name = tmp->name;
                 lowest.st_value = tmp->st_value;

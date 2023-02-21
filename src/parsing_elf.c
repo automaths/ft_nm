@@ -80,6 +80,8 @@ bool parsing_elf(char *file, t_data *zz)
                 if (!add_elem(&zz->elem, new_elem(buf, symtab_section_type(zz->sym[j], zz->sections), zz->sym[j].st_value, zz)))
                     return (writing(ERR_MALLOC), false);
             }
+            // if (ft_strncmp(buf, "__cxa_finalize", 8) == 0)
+            //     print_symtab_debug(&zz->sym[j]);
         }
     }
     // if (zz.sections[i].sh_type == SHT_HASH)

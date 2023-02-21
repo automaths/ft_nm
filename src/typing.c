@@ -60,17 +60,17 @@ char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr)
              && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
         c = 'B';
     //
-    else if (sym.st_shndx == 25)
-        c = 'D';
     else if (!ELF64_ST_BIND(sym.st_info) && ELF64_ST_TYPE(sym.st_info) == 1 && sym.st_info == 1 && sym.st_shndx > 20)
         return 'd';
     else if (sym.st_info == 32)
     {
-        if (ELF64_ST_VISIBILITY(sym.st_info) == 0)
+        if (ELF64_ST_VISIBILITY(sym.st_info) == 0 && sym.st_shndx != 25)
             return 'w';
         else
             return 'W';
     }
+    else if (sym.st_info == 34)
+        return 'w';
     else if (sym.st_info == 43)
         return 'w';
     //
@@ -100,6 +100,8 @@ char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr)
                 c = 'v';
         }
     //
+    else if (sym.st_shndx == 25)
+        c = 'D';
     else if (shdr[sym.st_shndx].sh_flags == (SHF_ALLOC))
         c = 'R';
     //

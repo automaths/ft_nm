@@ -1,9 +1,9 @@
 000000000000038c r __abi_tag
 0000000000004010 B __bss_start
 0000000000004010 b completed.0
-                 U __cxa_finalize@GLIBC_2.2.5
-0000000000004000 D data_start
+                 w __cxa_finalize@GLIBC_2.2.5
 0000000000004000 D __data_start
+0000000000004000 W data_start
 0000000000001090 t deregister_tm_clones
 0000000000001100 t __do_global_dtors_aux
 0000000000003dc0 d __do_global_dtors_aux_fini_array_entry
