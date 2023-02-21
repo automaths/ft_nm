@@ -109,5 +109,6 @@ char	*ft_substr_st_name(char const *s);
 bool parsing_elf32(char *ptr, t_data *zz);
 bool sorting_elements32(t_data *zz);
 void print_element32(t_elem32 *elem);
+void print_symtab_debug32(Elf32_Sym *sym);
 
 #endif
