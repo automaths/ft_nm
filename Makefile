@@ -17,7 +17,9 @@ SRCS        := 	main.c \
 				displaying.c \
 				typing.c \
 				utils/element.c \
+				utils/element32.c \
 				parsing_elf64.c \
+				parsing_elf32.c \
 				sorting.c \
 
 

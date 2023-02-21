@@ -68,3 +68,41 @@ bool sorting_elements(t_data *zz)
     }
     return true;
 }
+
+bool sorting_elements32(t_data *zz)
+{
+    t_elem32 *tmp = zz->elem32;
+    int size = ft_lstsize32(zz->elem32);
+    t_elem32 lowest;
+    t_elem32 *keep;
+
+    if (tmp == NULL)
+        return true;
+    lowest.name = "AAAA";
+    while (size > 0)
+    {
+        tmp = zz->elem32;
+        lowest.name = "AAAA";
+        while (tmp != NULL)
+        {
+            while (tmp != NULL && tmp->sorted)
+                tmp = tmp->next;
+            if (tmp == NULL)
+                break;
+            if (name_cmp(lowest.name, tmp->name) < 0 || (name_cmp(lowest.name, tmp->name) == 0 && (ft_strlen(lowest.name) > ft_strlen(tmp->name))))
+            {
+                lowest.name = tmp->name;
+                lowest.st_value = tmp->st_value;
+                lowest.type = tmp->type;
+                keep = tmp;
+            }
+            tmp = tmp->next;
+        }
+        if (!add_elem32(&zz->sorted32, new_elem32(lowest.name, lowest.type, lowest.st_value, zz)))
+            return (writing(ERR_MALLOC), false);
+        keep->sorted = true;
+        keep = NULL;
+        --size;
+    }
+    return true;
+}

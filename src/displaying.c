@@ -50,3 +50,15 @@ void print_element(t_elem *elem)
     printf("%c ", elem->type);
     printf("%s\n", elem->name);
 }
+
+void print_element32(t_elem32 *elem)
+{
+    if (elem->type == 'a' || elem->type == 'A')
+        return ;
+    if (elem->st_value || elem->type == 'T')
+        printf("%08x ", elem->st_value);
+    else
+        printf("         ");
+    printf("%c ", elem->type);
+    printf("%s\n", elem->name);
+}

@@ -36,6 +36,7 @@ void init_pointers_64bits(char *ptr, t_data *zz)
 
 bool parsing_elf64(char *ptr, t_data *zz)
 {
+    init_pointers_64bits(ptr, zz);
     for (int i = 0; i < zz->header->e_shnum; i++)
     if (zz->sections[i].sh_type == SHT_SYMTAB)
     {

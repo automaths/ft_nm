@@ -40,16 +40,34 @@ typedef struct s_elem
     struct s_elem   *next;
 } t_elem;
 
+typedef struct s_elem32
+{
+    char            *name;
+    char            type;
+    Elf32_Addr      st_value;
+    bool            sorted;
+    struct s_elem32   *next;
+} t_elem32;
+
 typedef struct s_data {
     t_argv          argv;
     t_grb           *grb;
+    char            *strtab;
+    int             arch;
+
     Elf64_Ehdr      *header;
     Elf64_Shdr      *sections;
     Elf64_Shdr      *strtab_section;
     Elf64_Sym       *sym;
-    char            *strtab;
     t_elem          *elem;
     t_elem          *sorted;
+
+    Elf32_Ehdr      *header32;
+    Elf32_Shdr      *sections32;
+    Elf32_Shdr      *strtab_section32;
+    Elf32_Sym       *sym32;
+    t_elem32        *elem32;
+    t_elem32        *sorted32;
 } t_data;
 
 size_t              ft_strlen(const char *str);
@@ -82,5 +100,14 @@ int                 ft_isalpha(int c);
 int                 ft_lstsize(t_elem *elem);
 bool                sorting_elements(t_data *zz);
 int                 ft_tolower(int c);
+
+char	symtab_section_type32(Elf32_Sym sym, Elf32_Shdr *shdr);
+t_elem32 *new_elem32(char *name, char type, Elf32_Addr st_value, t_data *zz);
+bool    add_elem32(t_elem32 **elem, t_elem32 *new);
+int	ft_lstsize32(t_elem32 *elem);
+char	*ft_substr_st_name(char const *s);
+bool parsing_elf32(char *ptr, t_data *zz);
+bool sorting_elements32(t_data *zz);
+void print_element32(t_elem32 *elem);
 
 #endif

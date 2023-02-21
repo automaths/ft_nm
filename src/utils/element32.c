@@ -1,10 +1,10 @@
 #include "ft_nm.h"
 
-t_elem *new_elem(char *name, char type, Elf64_Addr st_value, t_data *zz)
+t_elem32 *new_elem32(char *name, char type, Elf32_Addr st_value, t_data *zz)
 {
-    t_elem    *new;
+    t_elem32    *new;
 
-    new = (t_elem *)malloc(sizeof(t_elem));
+    new = (t_elem32 *)malloc(sizeof(t_elem32));
     if (!malloc_secure(new, &zz))
         return (NULL);
     new->name = name;
@@ -15,7 +15,7 @@ t_elem *new_elem(char *name, char type, Elf64_Addr st_value, t_data *zz)
     return (new);
 }
 
-bool    add_elem(t_elem **elem, t_elem *new)
+bool    add_elem32(t_elem32 **elem, t_elem32 *new)
 {
     if (new == NULL)
         return false;
@@ -27,7 +27,7 @@ bool    add_elem(t_elem **elem, t_elem *new)
     return true;
 }
 
-int	ft_lstsize(t_elem *elem)
+int	ft_lstsize32(t_elem32 *elem)
 {
 	int		i;
 

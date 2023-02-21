@@ -140,3 +140,68 @@ char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr)
 // w 2 2 34 0 0, 
 // -
 // ?
+
+char	symtab_section_type32(Elf32_Sym sym, Elf32_Shdr *shdr)
+{
+    char    c;
+    if (ELF32_ST_BIND(sym.st_info) == STB_GNU_UNIQUE)
+        c = 'u';
+    else if (sym.st_shndx == SHN_ABS)
+        c = 'A';
+    else if (sym.st_shndx == SHN_COMMON)
+        c = 'C';
+    else if (shdr[sym.st_shndx].sh_type == SHT_NOBITS
+             && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
+        c = 'B';
+    //
+    else if (!ELF32_ST_BIND(sym.st_info) && ELF32_ST_TYPE(sym.st_info) == 1 && sym.st_info == 1 && sym.st_shndx > 20)
+        return 'd';
+    else if (sym.st_info == 32)
+    {
+        if (ELF32_ST_VISIBILITY(sym.st_info) == 0 && sym.st_shndx != 25)
+            return 'w';
+        else
+            return 'W';
+    }
+    else if (sym.st_info == 34)
+        return 'w';
+    else if (sym.st_info == 43)
+        return 'w';
+    //
+    else if (sym.st_shndx == SHN_UNDEF)
+        c = 'U';
+    else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS
+             && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_EXECINSTR))
+        c = 'T';
+    else if (shdr[sym.st_shndx].sh_type == SHT_DYNAMIC)
+        c = 'D';
+    else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS
+             && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC))
+        c = 'R';
+    else if (shdr[sym.st_shndx].sh_type == SHT_PROGBITS
+             && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
+        c = 'D';
+    // else if (ELF32_ST_BIND(sym.st_info) == STB_WEAK)
+    //     {
+    //         c = 'W';
+    //         if (sym.st_shndx == SHN_UNDEF)
+    //             c = 'w';
+    //     }
+    else if (ELF32_ST_BIND(sym.st_info) == STB_WEAK && ELF32_ST_TYPE(sym.st_info) == STT_OBJECT)
+        {
+            c = 'V';
+            if (sym.st_shndx == SHN_UNDEF)
+                c = 'v';
+        }
+    //
+    else if (sym.st_shndx == 25)
+        c = 'D';
+    else if (shdr[sym.st_shndx].sh_flags == (SHF_ALLOC))
+        c = 'R';
+    //
+    else
+        c = '?';
+    if (ELF32_ST_BIND(sym.st_info) == STB_LOCAL && c != '?')
+        c += 32;
+    return c;
+}
