@@ -53,6 +53,8 @@ bool parsing_elf32(char *ptr, t_data *zz)
                 if (!add_elem32(&zz->elem32, new_elem32(buf, symtab_section_type32(zz->sym32[j], zz->sections32), zz->sym32[j].st_value, zz)))
                     return (writing(ERR_MALLOC), false);
             }
+            // if (ft_strncmp("__frame_dummy_init_array", buf, 15) == 0)
+            //     print_symtab_debug32(&zz->sym32[j]);
         }
     }
     // if (zz.sections32[i].sh_type == SHT_HASH)

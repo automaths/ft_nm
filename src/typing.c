@@ -60,7 +60,7 @@ char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr)
              && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
         c = 'B';
     //
-    else if (!ELF64_ST_BIND(sym.st_info) && ELF64_ST_TYPE(sym.st_info) == 1 && sym.st_info == 1 && sym.st_shndx > 20)
+    else if (!ELF64_ST_BIND(sym.st_info) && ELF64_ST_TYPE(sym.st_info) == 1 && sym.st_info == 1 && sym.st_shndx >= 19)
         return 'd';
     else if (sym.st_info == 32)
     {
@@ -141,6 +141,9 @@ char	symtab_section_type(Elf64_Sym sym, Elf64_Shdr *shdr)
 // -
 // ?
 
+//32BITS
+// d 0, 1 1 20 0
+
 char	symtab_section_type32(Elf32_Sym sym, Elf32_Shdr *shdr)
 {
     char    c;
@@ -154,15 +157,21 @@ char	symtab_section_type32(Elf32_Sym sym, Elf32_Shdr *shdr)
              && shdr[sym.st_shndx].sh_flags == (SHF_ALLOC | SHF_WRITE))
         c = 'B';
     //
-    else if (!ELF32_ST_BIND(sym.st_info) && ELF32_ST_TYPE(sym.st_info) == 1 && sym.st_info == 1 && sym.st_shndx > 20)
+    else if (!ELF32_ST_BIND(sym.st_info) && ELF32_ST_TYPE(sym.st_info) == 1 && sym.st_info == 1 && sym.st_shndx >= 19)
         return 'd';
-    else if (sym.st_info == 32)
-    {
-        if (ELF32_ST_VISIBILITY(sym.st_info) == 0 && sym.st_shndx != 25)
-            return 'w';
-        else
-            return 'W';
-    }
+    // else if (sym.st_info == 32)
+    // {
+    //     if (ELF32_ST_VISIBILITY(sym.st_info) == 0 && sym.st_shndx != 25)
+    //         return 'w';
+    //     else
+    //         return 'W';
+    // }
+    else if (ELF32_ST_BIND(sym.st_info) == STB_WEAK)
+        {
+            c = 'W';
+            if (sym.st_shndx == SHN_UNDEF)
+                c = 'w';
+        }
     else if (sym.st_info == 34)
         return 'w';
     else if (sym.st_info == 43)

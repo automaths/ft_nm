@@ -39,6 +39,17 @@ void print_symtab_debug(Elf64_Sym *sym)
     printf("st_size %ld\n", sym->st_size);
 }
 
+void print_symtab_debug32(Elf32_Sym *sym)
+{
+    printf("%d, %d %d %d %d ", ELF32_ST_BIND(sym->st_info), ELF32_ST_TYPE(sym->st_info), sym->st_info, sym->st_shndx, sym->st_other);
+    printf("st_name %d\n", sym->st_name);
+    printf("st_info %d\n", sym->st_info);
+    printf("st_other %d\n", sym->st_other);
+    printf("st_shndx %d\n", sym->st_shndx);
+    printf("st_value %d\n", sym->st_value);
+    printf("st_size %d\n", sym->st_size);
+}
+
 void print_element(t_elem *elem)
 {
     if (elem->type == 'a' || elem->type == 'A')
